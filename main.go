@@ -6,6 +6,10 @@ import (
 )
 
 func main(){
+
+	// 初始化路由
 	route.InitRoute()
+
+	// 监听 8101 端口
 	server.RunHttp(":8101")
 }

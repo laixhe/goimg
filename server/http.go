@@ -6,15 +6,14 @@ import (
 	"time"
 )
 
-var serveMux *http.ServeMux
+var serveMux *http.ServeMux = http.NewServeMux()
 
-func init() {
-	serveMux = http.NewServeMux()
-}
-
-// 注册访问路由-函数
+// 注册访问路由
 func HandleFunc(pattern string, handler func(w http.ResponseWriter, r *http.Request)) {
 	serveMux.HandleFunc(pattern, handler)
+}
+func Handle(pattern string, handler http.Handler) {
+	serveMux.Handle(pattern, handler)
 }
 
 // 启动 HTTP 服务

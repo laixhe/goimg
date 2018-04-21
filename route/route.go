@@ -7,9 +7,6 @@ import (
 
 // 注册访问路由
 func InitRoute() {
-
-	// 
-	server.HandleFunc("/", controller.Index)
-	server.HandleFunc("/upload", controller.Upload)
-
+	// 路由处理绑定
+	server.Handle("/", controller.Controller{})
 }
