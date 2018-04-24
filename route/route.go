@@ -13,4 +13,6 @@ func InitRoute() {
 
 	// 测试上传
 	server.HandleFunc("/test", uphand.Test)
+	// 状态码
+	server.HandleFunc("/statuscode", uphand.StatusCode)
 }

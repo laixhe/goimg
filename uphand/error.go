@@ -1,5 +1,6 @@
 package uphand
 
+// 状态码
 const (
 	StatusJson      = 1
 	StatusForm      = 2
@@ -35,6 +36,8 @@ func StatusText(code int) string {
 func GetStatusText() map[int]string {
 	return statusText
 }
+
+//------------------------------------------------------------------
 
 func showMain() []byte {
 	show := "<html><div>Goimg 轻量级的图片服务器</div>" +

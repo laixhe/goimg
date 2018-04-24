@@ -22,8 +22,6 @@ type Controller struct {
 
 func (this Controller) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.String() == "/favicon.ico" {
-		// 设置 http请求状态
-		w.WriteHeader(http.StatusOK)
 		return
 	}
 
