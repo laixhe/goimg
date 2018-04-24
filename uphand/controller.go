@@ -179,6 +179,7 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 			res.Msg = StatusText(StatusMkdir)
 			w.Write(ResponseJson(res))
 
+			return
 		}
 	} else {
 		if !dirInfo.IsDir() {
@@ -189,6 +190,7 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 				res.Msg = StatusText(StatusMkdir)
 				w.Write(ResponseJson(res))
 
+				return
 			}
 		}
 	}
