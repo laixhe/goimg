@@ -1,4 +1,4 @@
-package controller
+package uphand
 
 import (
 	"net/http"

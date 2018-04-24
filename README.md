@@ -10,4 +10,9 @@ goImg是一个使用Golang语言编写的图片服务器
 go get github.com/laixhe/goimg
 
 ### 获取图片
-GET /{图片ID}
+GET /图片ID
+
+### 上传图片
+POST /
+表单参数: userfile
+返回值: 图片ID
