@@ -15,4 +15,17 @@ GET /图片ID
 ### 上传图片
 POST /
 表单参数: userfile
-返回值: 图片ID
+返回值: json 主要是 imgid
+```
+{
+	"success": true,
+	"code": 200,
+	"msg": "OK",
+	"version": "0.1",
+	"data": {
+		"size": 42445,
+		"mime": "jpeg",
+		"imgid": "9d32e3c40efb0b749270695d5f0afdfc"
+	}
+}
+```

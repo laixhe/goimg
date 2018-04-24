@@ -88,14 +88,21 @@ func (this Controller) Get(w http.ResponseWriter, r *http.Request) {
 // 上传图片
 func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 
+	// 响应返回
+	res := UpdateResponse{}
+
 	// 上传表单 --------------------------------------
 
 	// 缓冲的大小 - 4M
 	r.ParseMultipartForm(1024 << 12)
 	//是上传表单域的名字fileHeader
-	upfile, _, err := r.FormFile("userfile")
+	upfile, upFileInfo, err := r.FormFile("userfile")
 	if err != nil {
-		w.Write(show404("表单字段: [ userfile ]" + err.Error()))
+
+		res.Code = StatusForm
+		res.Msg = StatusText(StatusForm)
+		w.Write(ResponseJson(res))
+
 		return
 	}
 	defer upfile.Close()
@@ -107,13 +114,21 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 	// 进行图片的解码
 	img, imgtype, err := image.Decode(bufUpFile)
 	if err != nil {
-		w.Write(show404("图片解码错误:" + err.Error()))
+
+		res.Code = StatusImgDecode
+		res.Msg = StatusText(StatusImgDecode)
+		w.Write(ResponseJson(res))
+
 		return
 	}
 
 	// 判断是否有这个图片类型
 	if !imghand.IsType(imgtype) {
-		w.Write(show404("没有这个图片类型:" + imgtype))
+
+		res.Code = StatusImgIsType
+		res.Msg = StatusText(StatusImgIsType)
+		w.Write(ResponseJson(res))
+
 		return
 	}
 
@@ -122,7 +137,11 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 	// 设置下次读写位置（移动文件指针位置）
 	_, err = upfile.Seek(0, 0)
 	if err != nil {
-		w.Write(show404("设置下次读写位置失败"))
+
+		res.Code = StatusFileSeek
+		res.Msg = StatusText(StatusFileSeek)
+		w.Write(ResponseJson(res))
+
 		return
 	}
 
@@ -134,7 +153,11 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 	bufFile := bufio.NewReader(upfile)
 	_, err = io.Copy(md5Hash, bufFile)
 	if err != nil {
-		w.Write(show404("MD5计算文件失败:" + err.Error()))
+
+		res.Code = StatusFileMd5
+		res.Msg = StatusText(StatusFileMd5)
+		w.Write(ResponseJson(res))
+
 		return
 	}
 	// 进行 MD5 算计，返回 16进制的 byte 数组
@@ -151,10 +174,24 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 	// 获取目录信息，并创建目录
 	dirInfo, err := os.Stat(dirPath)
 	if err != nil {
-		os.MkdirAll(dirPath, 0666)
+		err = os.MkdirAll(dirPath, 0666)
+		if err != nil {
+
+			res.Code = StatusMkdir
+			res.Msg = StatusText(StatusMkdir)
+			w.Write(ResponseJson(res))
+
+		}
 	} else {
 		if !dirInfo.IsDir() {
-			os.MkdirAll(dirPath, 0666)
+			err = os.MkdirAll(dirPath, 0666)
+			if err != nil {
+
+				res.Code = StatusMkdir
+				res.Msg = StatusText(StatusMkdir)
+				w.Write(ResponseJson(res))
+
+			}
 		}
 	}
 
@@ -163,18 +200,57 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 	// 打开一个文件,文件不存在就会创建
 	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
-		w.Write(show404("上传创建失败:" + err.Error()))
+
+		res.Code = StatusOpenFile
+		res.Msg = StatusText(StatusOpenFile)
+		w.Write(ResponseJson(res))
+
 		return
 	}
 	defer file.Close()
 
 	if imgtype == imghand.PNG {
-		png.Encode(file, img)
+		err = png.Encode(file, img)
+		if err != nil {
+
+			res.Code = StatusImgEncode
+			res.Msg = StatusText(StatusImgEncode)
+			w.Write(ResponseJson(res))
+
+			return
+		}
+
 	} else if imgtype == imghand.JPG {
-		jpeg.Encode(file, img, nil)
+		err = jpeg.Encode(file, img, nil)
+		if err != nil {
+
+			res.Code = StatusImgEncode
+			res.Msg = StatusText(StatusImgEncode)
+			w.Write(ResponseJson(res))
+
+			return
+		}
+
 	} else if imgtype == imghand.JPEG {
-		jpeg.Encode(file, img, nil)
+		err = jpeg.Encode(file, img, nil)
+		if err != nil {
+
+			res.Code = StatusImgEncode
+			res.Msg = StatusText(StatusImgEncode)
+			w.Write(ResponseJson(res))
+
+			return
+		}
+
 	}
 
-	w.Write([]byte(fileMd5))
+	res.Success = true
+	res.Code = StatusOK
+	res.Msg = StatusText(StatusOK)
+	res.Data.Imgid = fileMd5
+	res.Data.Mime = imgtype
+	res.Data.Size = upFileInfo.Size
+
+	w.Write(ResponseJson(res))
+
 }
