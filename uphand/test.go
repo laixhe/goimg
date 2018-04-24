@@ -13,11 +13,13 @@ func Test(w http.ResponseWriter, r *http.Request) {
         <title>测试上传</title>
     </head>
     <body>
-        <form action="/" method="post" enctype="multipart/form-data">
-            <input type="file" name="userfile" /> 
-            <input type="file" name="userfile" /> 
-            <input type="submit" name="submit" />
-        </form>
+        <div style="padding: 20px;">
+            <p>测试上传</p>
+            <form action="/" method="post" enctype="multipart/form-data">
+                <p><input type="file" name="userfile" /></p>
+                <p><input type="submit" name="submit" value="上传" /></p>
+            </form>
+        </div>
     </body>
 </html>`
 

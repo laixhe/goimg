@@ -9,9 +9,10 @@ const (
 	PNG  = "png"
 	JPG  = "jpg"
 	JPEG = "jpeg"
+	GIF  = "gif"
 )
 
-var ImgType []string = []string{PNG, JPG, JPEG}
+var ImgType []string = []string{PNG, JPG, JPEG, GIF}
 
 // 判断是否有这个图片类型
 func IsType(str string) bool {
@@ -20,7 +21,7 @@ func IsType(str string) bool {
 	str = strings.ToLower(str)
 
 	for _, v := range ImgType {
-		if v == str{
+		if v == str {
 			return true
 		}
 	}

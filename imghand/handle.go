@@ -1,12 +1,12 @@
 package imghand
 
 import (
-	"os"
 	"image"
 	"image/draw"
 	_ "image/gif"
-	_ "image/png"
 	_ "image/jpeg"
+	_ "image/png"
+	"os"
 )
 
 // 裁剪图像
@@ -37,5 +37,5 @@ func FlipImage() {
 }
 
 // 旋转图像
-func RotateImage(){
+func RotateImage() {
 }

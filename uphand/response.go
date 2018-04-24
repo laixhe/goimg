@@ -19,7 +19,7 @@ func (this ResponseModel) Show() {}
 
 // 上传响应数据
 type UpdateDate struct {
-	Size  int64    `json:"size"`  // 大小
+	Size  int64  `json:"size"`  // 大小
 	Mime  string `json:"mime"`  // 图片类型
 	Imgid string `json:"imgid"` // 图片id
 }

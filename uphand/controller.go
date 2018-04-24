@@ -5,7 +5,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"image"
-	_ "image/gif"
+	"image/gif"
 	"image/jpeg"
 	"image/png"
 	"io"
@@ -76,7 +76,7 @@ func (this Controller) Get(w http.ResponseWriter, r *http.Request) {
 	// 打开文件
 	file, err := os.Open(filePath)
 	if err != nil {
-		w.Write(show404(filePath + " : " + err.Error()))
+		w.Write(show404(err.Error()))
 		return
 	}
 	defer file.Close()
@@ -211,37 +211,48 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 
 	if imgtype == imghand.PNG {
 		err = png.Encode(file, img)
-		if err != nil {
-
-			res.Code = StatusImgEncode
-			res.Msg = StatusText(StatusImgEncode)
-			w.Write(ResponseJson(res))
-
-			return
-		}
 
 	} else if imgtype == imghand.JPG {
 		err = jpeg.Encode(file, img, nil)
-		if err != nil {
-
-			res.Code = StatusImgEncode
-			res.Msg = StatusText(StatusImgEncode)
-			w.Write(ResponseJson(res))
-
-			return
-		}
 
 	} else if imgtype == imghand.JPEG {
 		err = jpeg.Encode(file, img, nil)
+
+	} else if imgtype == imghand.GIF {
+
+		// 重新对 gif 格式进行解码
+		// image.Decode 只能读取 gif 的第一帧
+
+		// 设置下次读写位置（移动文件指针位置）
+		_, err = upfile.Seek(0, 0)
 		if err != nil {
 
-			res.Code = StatusImgEncode
-			res.Msg = StatusText(StatusImgEncode)
+			res.Code = StatusFileSeek
+			res.Msg = StatusText(StatusFileSeek)
 			w.Write(ResponseJson(res))
 
 			return
 		}
 
+		gifimg, giferr := gif.DecodeAll(upfile)
+		if giferr != nil {
+
+			res.Code = StatusImgDecode
+			res.Msg = StatusText(StatusImgDecode)
+			w.Write(ResponseJson(res))
+
+			return
+		}
+		err = gif.EncodeAll(file, gifimg)
+
+	}
+
+	if err != nil {
+		res.Code = StatusImgEncode
+		res.Msg = StatusText(StatusImgEncode)
+		w.Write(ResponseJson(res))
+
+		return
 	}
 
 	res.Success = true
