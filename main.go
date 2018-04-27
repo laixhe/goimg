@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/laixhe/goimg/route"
 	"github.com/laixhe/goimg/server"
+	"github.com/laixhe/goimg/config"
 )
 
 func main() {
@@ -11,5 +12,5 @@ func main() {
 	route.InitRoute()
 
 	// 监听 8101 端口
-	server.RunHttp(":8101")
+	server.RunHttp(config.HttpAddr())
 }

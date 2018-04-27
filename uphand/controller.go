@@ -9,7 +9,6 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -40,46 +39,45 @@ func (this Controller) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (this Controller) Get(w http.ResponseWriter, r *http.Request) {
 
 	urlParse := r.URL.String()
-	if len(urlParse) < 32 {
+
+	if urlParse == "/" {
 		w.Write(showMain())
+		return
+	}
+
+	if len(urlParse) < 32 {
+		imghand.NoImage(w)
 		return
 	}
 
 	// 进行 url 解析
 	parse, err := url.Parse(urlParse)
 	if err != nil {
-		w.Write(show404("404 not found"))
+		imghand.NoImage(w)
 		return
 	}
 	if len(parse.Path) != 33 {
-		w.Write(show404(parse.Path))
+		imghand.NoImage(w)
 		return
 	}
 
 	parsePath := parse.Path[1:]
 
 	// 匹配是否是 md5 的长度
-	if !regexpUrlParse.MatchString(parsePath) {
-		w.Write(show404(parse.Path))
+	if !imghand.IsMD5Path(parsePath) {
+		imghand.NoImage(w)
 		return
 	}
+
+	// 获取要裁剪图像的宽度、高度
+	width := imghand.StringToInt(r.FormValue("w"))  // 宽度
+	height := imghand.StringToInt(r.FormValue("h")) // 高度
 
 	// 组合文件完整路径
-	sortPath := SortPath([]byte(parsePath[:5]))
-	filePath := "img/" + sortPath + "/" + parsePath
+	filePath := imghand.JoinPath(parsePath) + "/" + parsePath
 
-	log.Println(parsePath)
-	log.Println(filePath)
-
-	// 打开文件
-	file, err := os.Open(filePath)
-	if err != nil {
-		w.Write(show404(err.Error()))
-		return
-	}
-	defer file.Close()
-
-	io.Copy(w, file)
+	// 加载图片
+	imghand.CutImage(w, filePath, width, height)
 
 }
 
@@ -165,9 +163,8 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 	// 目录计算 --------------------------------------
 
 	// 组合文件完整路径
-	sortPath := SortPath([]byte(fileMd5[:5]))
-	dirPath := "img/" + sortPath + "/" // 目录
-	filePath := dirPath + fileMd5      // 文件路径
+	dirPath := imghand.JoinPath(fileMd5) + "/" // 目录
+	filePath := dirPath + fileMd5              // 文件路径
 
 	// 获取目录信息，并创建目录
 	dirInfo, err := os.Stat(dirPath)
