@@ -2,20 +2,28 @@
 
 ### 简介
 > goImg是一个使用Golang语言编写的图片服务器
+
 > 目前只实现单文件上传
+
 > 支持 jpeg png gif 等图片上传
 
 ### 功能特点
 > 文件存储目录采用md5算法生成
 
+> 目前支持 jpeg png 的缩略图，gif 暂不支持
+
 ### 安装
 > go get github.com/laixhe/goimg
 
 ### 获取图片
-> GET /图片ID
+> GET /9d32e3c40efb0b749270695d5f0afdfc
+
+
+### 获取图片并缩略，宽度=300 高度=100
+> GET /9d32e3c40efb0b749270695d5f0afdfc?w=300&h=100
 
 ### 上传图片
-> POST /
+> POST  /
 
 > 表单参数: userfile
 
