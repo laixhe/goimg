@@ -11,6 +11,6 @@ func main() {
 	// 初始化路由
 	route.InitRoute()
 
-	// 监听 8101 端口
+	// 开始监听
 	server.RunHttp(config.HttpAddr())
 }

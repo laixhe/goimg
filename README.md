@@ -19,7 +19,7 @@
 > GET /9d32e3c40efb0b749270695d5f0afdfc
 
 
-### 获取图片并缩略，宽度=300 高度=100
+### 获取图片 并缩略，宽度=300 高度=100
 > GET /9d32e3c40efb0b749270695d5f0afdfc?w=300&h=100
 
 ### 上传图片
@@ -42,3 +42,17 @@
 	}
 }
 ```
+
+### 获取图片信息
+> GET /info?imgid=9d32e3c40efb0b749270695d5f0afdf
+
+> GET /info?imgid=9d32e3c40efb0b749270695d5f0afdf&cw=300&h=100
+
+> 返回值: json
+
+> 与 上传图片 的返回一致
+
+### 获取状态码
+> GET /statuscode
+
+> 返回值: json

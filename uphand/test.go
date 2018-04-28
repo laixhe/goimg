@@ -1,7 +1,6 @@
 package uphand
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
@@ -26,10 +25,4 @@ func Test(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte(html))
 
-}
-
-// 状态码
-func StatusCode(w http.ResponseWriter, r *http.Request) {
-	data, _ := json.Marshal(GetStatusText())
-	w.Write(data)
 }

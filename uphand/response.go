@@ -3,7 +3,7 @@ package uphand
 import "encoding/json"
 
 type ResponseInterface interface {
-	Show()
+	SetVersion(string)
 }
 
 // 响应请求的公共模型
@@ -15,7 +15,9 @@ type ResponseModel struct {
 	Data    string `json:"data"`    // 数据
 }
 
-func (this ResponseModel) Show() {}
+func (this *ResponseModel) SetVersion(str string) {
+	this.Version = str
+}
 
 // 上传响应数据
 type UpdateDate struct {
@@ -32,6 +34,8 @@ type UpdateResponse struct {
 
 // 响应 json 打包
 func ResponseJson(res ResponseInterface) []byte {
+
+	res.SetVersion("0.2")
 
 	data, err := json.Marshal(res)
 	if err != err {

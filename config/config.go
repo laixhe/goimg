@@ -3,7 +3,6 @@ package config
 import (
 	"github.com/go-ini/ini"
 	"log"
-	"os"
 	"strings"
 )
 
@@ -11,12 +10,8 @@ var conf *ini.File
 
 func init() {
 
-	path, err := os.Getwd()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	conf, err = ini.Load(path + "/config.ini")
+	var err error
+	conf, err = ini.Load("config.ini")
 	if err != nil {
 		log.Fatalln(err)
 	}

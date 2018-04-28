@@ -10,7 +10,6 @@ import (
 	"image/png"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
 
 	"github.com/laixhe/goimg/imghand"
@@ -40,41 +39,16 @@ func (this Controller) Get(w http.ResponseWriter, r *http.Request) {
 
 	urlParse := r.URL.String()
 
-	if urlParse == "/" {
+	// 组合文件完整路径
+	filePath := imghand.UrlParse(urlParse[1:])
+	if filePath == "" {
 		w.Write(showMain())
-		return
-	}
-
-	if len(urlParse) < 32 {
-		imghand.NoImage(w)
-		return
-	}
-
-	// 进行 url 解析
-	parse, err := url.Parse(urlParse)
-	if err != nil {
-		imghand.NoImage(w)
-		return
-	}
-	if len(parse.Path) != 33 {
-		imghand.NoImage(w)
-		return
-	}
-
-	parsePath := parse.Path[1:]
-
-	// 匹配是否是 md5 的长度
-	if !imghand.IsMD5Path(parsePath) {
-		imghand.NoImage(w)
 		return
 	}
 
 	// 获取要裁剪图像的宽度、高度
 	width := imghand.StringToInt(r.FormValue("w"))  // 宽度
 	height := imghand.StringToInt(r.FormValue("h")) // 高度
-
-	// 组合文件完整路径
-	filePath := imghand.JoinPath(parsePath) + "/" + parsePath
 
 	// 加载图片
 	imghand.CutImage(w, filePath, width, height)
@@ -85,8 +59,7 @@ func (this Controller) Get(w http.ResponseWriter, r *http.Request) {
 func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 
 	// 响应返回
-	res := UpdateResponse{}
-	res.Version = "0.2"
+	res := new(UpdateResponse)
 
 	// 上传表单 --------------------------------------
 

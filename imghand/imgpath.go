@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/laixhe/goimg/config"
 	"strconv"
+	"net/url"
 )
 
 // 匹配是否是 md5 的长度
@@ -39,6 +40,39 @@ func JoinPath(md5_str string) string {
 
 	sortPath := SortPath([]byte(md5_str[:5]))
 	return config.PathImg() + sortPath + "/" + md5_str
+
+}
+
+// 进行 url 部分解析 - md5，并组合文件完整路径
+func UrlParse(md5_url string) string {
+
+	if md5_url == "" {
+		return ""
+	}
+
+	if len(md5_url) < 32 {
+		return ""
+	}
+
+	// 进行 url 解析
+	parse, err := url.Parse(md5_url)
+	if err != nil {
+		return ""
+	}
+
+	parsePath := parse.Path
+
+	if len(parse.Path) != 32 {
+		return ""
+	}
+
+	// 匹配是否是 md5 的长度
+	if !IsMD5Path(parsePath) {
+		return ""
+	}
+
+	// 组合文件完整路径
+	return JoinPath(parsePath) + "/" + parsePath
 
 }
 
