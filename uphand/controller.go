@@ -86,6 +86,7 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 
 	// 响应返回
 	res := UpdateResponse{}
+	res.Version = "0.2"
 
 	// 上传表单 --------------------------------------
 
@@ -194,63 +195,67 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 
 	// 存入文件 --------------------------------------
 
-	// 打开一个文件,文件不存在就会创建
-	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, 0666)
+	_, err = os.Stat(filePath)
 	if err != nil {
 
-		res.Code = StatusOpenFile
-		res.Msg = StatusText(StatusOpenFile)
-		w.Write(ResponseJson(res))
-
-		return
-	}
-	defer file.Close()
-
-	if imgtype == imghand.PNG {
-		err = png.Encode(file, img)
-
-	} else if imgtype == imghand.JPG {
-		err = jpeg.Encode(file, img, nil)
-
-	} else if imgtype == imghand.JPEG {
-		err = jpeg.Encode(file, img, nil)
-
-	} else if imgtype == imghand.GIF {
-
-		// 重新对 gif 格式进行解码
-		// image.Decode 只能读取 gif 的第一帧
-
-		// 设置下次读写位置（移动文件指针位置）
-		_, err = upfile.Seek(0, 0)
+		// 打开一个文件,文件不存在就会创建
+		file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, 0666)
 		if err != nil {
 
-			res.Code = StatusFileSeek
-			res.Msg = StatusText(StatusFileSeek)
+			res.Code = StatusOpenFile
+			res.Msg = StatusText(StatusOpenFile)
+			w.Write(ResponseJson(res))
+
+			return
+		}
+		defer file.Close()
+
+		if imgtype == imghand.PNG {
+			err = png.Encode(file, img)
+
+		} else if imgtype == imghand.JPG || imgtype == imghand.JPEG {
+			err = jpeg.Encode(file, img, nil)
+
+		} else if imgtype == imghand.GIF {
+
+			// 重新对 gif 格式进行解码
+			// image.Decode 只能读取 gif 的第一帧
+
+			// 设置下次读写位置（移动文件指针位置）
+			_, err = upfile.Seek(0, 0)
+			if err != nil {
+
+				res.Code = StatusFileSeek
+				res.Msg = StatusText(StatusFileSeek)
+				w.Write(ResponseJson(res))
+
+				return
+			}
+
+			gifimg, giferr := gif.DecodeAll(upfile)
+			if giferr != nil {
+
+				res.Code = StatusImgDecode
+				res.Msg = StatusText(StatusImgDecode)
+				w.Write(ResponseJson(res))
+
+				return
+			}
+			err = gif.EncodeAll(file, gifimg)
+
+		}
+
+
+		if err != nil {
+			res.Code = StatusImgEncode
+			res.Msg = StatusText(StatusImgEncode)
 			w.Write(ResponseJson(res))
 
 			return
 		}
 
-		gifimg, giferr := gif.DecodeAll(upfile)
-		if giferr != nil {
-
-			res.Code = StatusImgDecode
-			res.Msg = StatusText(StatusImgDecode)
-			w.Write(ResponseJson(res))
-
-			return
-		}
-		err = gif.EncodeAll(file, gifimg)
-
 	}
 
-	if err != nil {
-		res.Code = StatusImgEncode
-		res.Msg = StatusText(StatusImgEncode)
-		w.Write(ResponseJson(res))
-
-		return
-	}
 
 	res.Success = true
 	res.Code = StatusOK

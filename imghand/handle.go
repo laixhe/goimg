@@ -103,9 +103,7 @@ func CutImage(w http.ResponseWriter, path string, width, height int) {
 
 	if imgtype == JPEG || imgtype == JPG {
 		jpeg.Encode(out, reimg, nil)
-	}
-
-	if imgtype == PNG {
+	} else if imgtype == PNG {
 		png.Encode(out, reimg)
 	}
 
