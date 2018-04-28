@@ -91,6 +91,14 @@ func CutImage(w http.ResponseWriter, path string, width, height int) {
 		return
 	}
 
+	if width > img.Bounds().Max.X {
+		width = img.Bounds().Max.X
+	}
+
+	if height > img.Bounds().Max.Y {
+		height = img.Bounds().Max.Y
+	}
+
 	// 进行裁剪
 	reimg := resize.Resize(uint(width), uint(height), img, resize.Lanczos3)
 	// 裁剪的存储
