@@ -35,7 +35,7 @@ type UpdateResponse struct {
 // 响应 json 打包
 func ResponseJson(res ResponseInterface) []byte {
 
-	res.SetVersion("0.2")
+	res.SetVersion("0.1.0")
 
 	data, err := json.Marshal(res)
 	if err != err {
