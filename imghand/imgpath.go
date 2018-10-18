@@ -1,22 +1,22 @@
 package imghand
 
 import (
-	"fmt"
-	"github.com/laixhe/goimg/config"
-	"strconv"
 	"net/url"
+	"strconv"
+	"strings"
+
+	"github.com/laixhe/goimg/config"
 )
 
 // 匹配是否是 md5 的长度
 func IsMD5Path(str string) bool {
-
 	return regexpUrlParse.MatchString(str)
-
 }
 
 // 路径部分排序做目录
 func SortPath(str []byte) string {
 
+	// 对 byte 进行排序
 	strLen := len(str)
 	for i := 0; i < strLen; i++ {
 		for j := 1 + i; j < strLen; j++ {
@@ -26,20 +26,30 @@ func SortPath(str []byte) string {
 		}
 	}
 
-	ret := ""
+	// 对 byte 依次组成数字符串
+	var ret = strings.Builder{}
 
 	for i := 0; i < strLen; i++ {
-		ret += fmt.Sprintf("%d", str[i])
+		ret.WriteString(strconv.Itoa(int(str[i])))
 	}
 
-	return ret
+	return ret.String()
 }
 
 // 组合文件目录路径
 func JoinPath(md5_str string) string {
 
+	// 路径部分排序做目录
 	sortPath := SortPath([]byte(md5_str[:5]))
-	return config.PathImg() + sortPath + "/" + md5_str
+
+	var str = strings.Builder{}
+
+	str.WriteString(config.PathImg())
+	str.WriteString(sortPath)
+	str.WriteString("/")
+	str.WriteString(md5_str)
+
+	return str.String()
 
 }
 
@@ -62,7 +72,7 @@ func UrlParse(md5_url string) string {
 
 	parsePath := parse.Path
 
-	if len(parse.Path) != 32 {
+	if len(parsePath) != 32 {
 		return ""
 	}
 
@@ -76,6 +86,7 @@ func UrlParse(md5_url string) string {
 
 }
 
+// 字符串的数字转int
 func StringToInt(str string) int {
 	if str == "" {
 		return 0

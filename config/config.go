@@ -33,7 +33,7 @@ func HttpAddr() string {
 
 	addr := Get("http.addr")
 	if addr == "" {
-		return ":8101"
+		return ":8080"
 	}
 
 	return addr
