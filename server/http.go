@@ -18,11 +18,11 @@ func Handle(pattern string, handler http.Handler) {
 
 // 启动 HTTP 服务
 // start http server
-func RunHttp(adrr string) {
+func RunHttp(addr string) {
 
 	// 手工配置 http.Server 服务
 	server := http.Server{
-		Addr:              adrr,            // 监听地址和端口
+		Addr:              addr,            // 监听地址和端口
 		Handler:           serveMux,        // Handle
 		ReadTimeout:       5 * time.Second, // 读超时
 		WriteTimeout:      5 * time.Second, // 写超时
@@ -30,6 +30,7 @@ func RunHttp(adrr string) {
 		IdleTimeout:       5 * time.Second,
 	}
 
+	log.Printf("server listen on %s\n", addr)
 	// 启动监听
 	err := server.ListenAndServe()
 	if err != nil {
