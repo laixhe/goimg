@@ -52,4 +52,3 @@ func showMain() []byte {
 
 	return []byte(show)
 }
-

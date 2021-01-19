@@ -12,30 +12,32 @@ import (
 	"net/http"
 	"os"
 
+	"log"
+
 	"github.com/laixhe/goimg/imghand"
 )
 
 type Controller struct {
 }
 
-func (this Controller) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (controller Controller) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.String() == "/favicon.ico" {
 		return
 	}
 
 	if r.Method == "GET" {
-		this.Get(w, r)
+		controller.Get(w, r)
 		return
 	}
 
 	if r.Method == "POST" {
-		this.Post(w, r)
+		controller.Post(w, r)
 		return
 	}
 }
 
-// 输出图片
-func (this Controller) Get(w http.ResponseWriter, r *http.Request) {
+// Get 输出图片
+func (controller Controller) Get(w http.ResponseWriter, r *http.Request) {
 
 	urlParse := r.URL.String()
 
@@ -55,8 +57,8 @@ func (this Controller) Get(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// 上传图片
-func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
+//Post 上传图片
+func (controller Controller) Post(w http.ResponseWriter, r *http.Request) {
 
 	// 响应返回
 	res := new(UpdateResponse)
@@ -88,7 +90,7 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 		res.Code = StatusImgDecode
 		res.Msg = StatusText(StatusImgDecode)
 		w.Write(ResponseJson(res))
-
+		log.Printf("res is %v\n", ResponseJson(res))
 		return
 	}
 
@@ -143,9 +145,9 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 	// 获取目录信息，并创建目录
 	dirInfo, err := os.Stat(dirPath)
 	if err != nil {
-		err = os.MkdirAll(dirPath, 0666)
+		err = os.MkdirAll(dirPath, 0755)
 		if err != nil {
-
+			log.Printf("res is %v\n", res)
 			res.Code = StatusMkdir
 			res.Msg = StatusText(StatusMkdir)
 			w.Write(ResponseJson(res))
@@ -154,7 +156,7 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		if !dirInfo.IsDir() {
-			err = os.MkdirAll(dirPath, 0666)
+			err = os.MkdirAll(dirPath, 0755)
 			if err != nil {
 
 				res.Code = StatusMkdir
@@ -172,7 +174,7 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 
 		// 打开一个文件,文件不存在就会创建
-		file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, 0666)
+		file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY, 0755)
 		if err != nil {
 
 			res.Code = StatusOpenFile
@@ -218,7 +220,6 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 
 		}
 
-
 		if err != nil {
 			res.Code = StatusImgEncode
 			res.Msg = StatusText(StatusImgEncode)
@@ -228,7 +229,6 @@ func (this Controller) Post(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-
 
 	res.Success = true
 	res.Code = StatusOK
