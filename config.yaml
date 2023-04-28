@@ -1,0 +1,9 @@
+app:
+  version: 0.0.2
+
+http:
+  ip: 0.0.0.0
+  port: 8080
+
+img:
+  dir: img/

@@ -12,23 +12,21 @@ const (
 	GIF  = "gif"
 )
 
-var imgType []string = []string{PNG, JPG, JPEG, GIF}
+var imgType = []string{PNG, JPG, JPEG, GIF}
 
+// GetImgType 图片类型
 func GetImgType() []string {
 	return imgType
 }
 
-// 判断是否有这个图片类型
-func IsType(str string) bool {
-
+// IsImgType 判断是否有这个图片类型
+func IsImgType(str string) bool {
 	// 转小写
 	str = strings.ToLower(str)
-
 	for _, v := range imgType {
 		if v == str {
 			return true
 		}
 	}
-
 	return false
 }
