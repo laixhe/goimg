@@ -57,6 +57,7 @@ func (h *ImgHand) JoinDir(path string) string {
 	var strBuilder = h.GetStringPool()
 
 	strBuilder.WriteString(config.ImgDir())
+	strBuilder.WriteString("/")
 	strBuilder.WriteString(path[:5])
 	strBuilder.WriteString("/")
 	strBuilder.WriteString(path)

@@ -108,7 +108,7 @@ func HttpAddr() string {
 
 func ImgDir() string {
 	if conf.Img.Dir == "" {
-		conf.Img.Dir = "img/"
+		conf.Img.Dir = "img"
 	}
 	return conf.Img.Dir
 }

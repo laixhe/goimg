@@ -37,7 +37,7 @@ func (s *Server) HttpRun(addr string) {
 	s.http.Addr = addr
 	s.http.Handler = s.mux
 
-	logrus.Printf("server listen on %s", addr)
+	logrus.Debugf("http listen %s", addr)
 
 	// 启动监听
 	err := s.http.ListenAndServe()

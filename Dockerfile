@@ -1,22 +1,26 @@
-FROM golang:1.15.13-buster as builder
+FROM golang:alpine as builder
 
-WORKDIR /workspace
-# Copy the Go Modules manifests
-COPY go.mod go.mod
-COPY go.sum go.sum
+ENV GOPROXY https://proxy.golang.com.cn,direct
+ENV CGO_ENABLED 0
 
-RUN go env -w GOPROXY=https://goproxy.cn,direct
+WORKDIR /goimg
+COPY . /goimg
+
 RUN go mod download
 
-COPY . /workspace
-
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o manager main.go
+RUN go build -o goimg
 
-FROM alpine:3.13
-WORKDIR /
-COPY --from=builder /workspace/manager .
-COPY --from=builder /workspace/config.ini .
+FROM alpine
 
-ENTRYPOINT ["/manager"]
+ENV TZ Asia/Shanghai
+
+WORKDIR /goimg
+
+COPY --from=builder /goimg/goimg .
+COPY --from=builder /goimg/config.yaml .
+
+EXPOSE 8080
+
+ENTRYPOINT ["./goimg"]
 

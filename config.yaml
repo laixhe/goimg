@@ -6,4 +6,4 @@ http:
   port: 8080
 
 img:
-  dir: img/
+  dir: img

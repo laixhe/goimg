@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"runtime"
 
 	"github.com/sirupsen/logrus"
 
@@ -11,10 +12,11 @@ import (
 )
 
 func main() {
-	logrus.SetOutput(os.Stdout)                  // 以 stdout 为输出，代替默认的 stderr
-	logrus.SetFormatter(&logrus.JSONFormatter{}) // 日志作为 JSON 而不是默认的 ASCII 格式器
-	logrus.SetReportCaller(true)                 // 记录方法名称
-	logrus.SetLevel(logrus.TraceLevel)           // 日志级别
+	logrus.SetOutput(os.Stdout) // 以 stdout 为输出，代替默认的 stderr
+	//logrus.SetFormatter(&logrus.JSONFormatter{}) // 日志作为 JSON 而不是默认的 ASCII 格式器
+	logrus.SetReportCaller(true)       // 记录方法名称
+	logrus.SetLevel(logrus.TraceLevel) // 日志级别
+	logrus.Debugf("golang version: %s", runtime.Version())
 
 	// 初始化配置
 	config.Init("config.yaml")
